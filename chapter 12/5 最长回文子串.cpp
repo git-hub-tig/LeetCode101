@@ -1,26 +1,31 @@
 
 // 5. Longest Palindromic Substring
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include "bits/stdc++.h"
+#include "doctest.h"
+using namespace std;
 
-class Solution {
-public:
-    string longestPalindrome(string s) {
-        int len = s.size();
-        string retStr = "";
-        if (s.empty()) {
-            return retStr;
+class Solution
+{
+  public:
+    string
+    longestPalindrome (string s)
+    {
+        int len = s.size ();
+        if (len < 2)
+        {
+            return s;
         }
 
-        if (len == 1) {
-            return (retStr + s[0]);
-        }
-
-        vector<vector<bool> > dp(len, vector<bool>(len, false));
+        vector<vector<bool> > dp (len, vector<bool> (len, false));
         int maxLen = 1;
-        pair<int, int> palStr(0, 0);
+        pair<int, int> palStr (0, 0);
 
-        for (int i = 0; i < len - 1; i++) {
+        for (int i = 0; i < len - 1; i++)
+        {
             dp[i][i] = true;
-            if (s[i] == s[i + 1]) {
+            if (s[i] == s[i + 1]) // wqs recursion base
+            {
                 dp[i][i + 1] = true;
                 maxLen = 2;
                 palStr.first = i;
@@ -29,10 +34,13 @@ public:
         }
         dp[len - 1][len - 1] = true;
 
-        for (int l = 2; l < len; l++) {
-            for (int i = 0; i < len - l; i++) {
-                dp[i][i + l] = ((s[i] == s[i + l]) && dp[i + 1][i + l - 1]);
-                if (dp[i][i + l] && l + 1 > maxLen) {
+        for (int l = 2; l < len; l++)
+        {
+            for (int i = 0; i < len - l; i++)
+            {
+                dp[i][i + l] = ((s[i] == s[i + l]) && dp[i + 1][i + l - 1]); // wqs dp recursively condition
+                if (dp[i][i + l] && l + 1 > maxLen) // wqs update
+                {
                     maxLen = l + 1;
                     palStr.first = i;
                     palStr.second = i + l;
@@ -40,6 +48,14 @@ public:
             }
         }
 
-        return s.substr(palStr.first, maxLen);
+        return string(begin(s)+palStr.first, begin(s)+palStr.first+maxLen);
+        // return s.substr (palStr.first, maxLen);
     }
 };
+
+TEST_CASE ("name")
+{
+    CHECK (Solution().longestPalindrome ("1") == "1");
+    CHECK (Solution().longestPalindrome ("") == "");
+    CHECK (Solution().longestPalindrome ("abc123321") == "123321");
+}
